@@ -85,7 +85,7 @@ class WebWeixin(object):
         return description
 
     def __init__(self):
-        self.DEBUG = False
+        self.DEBUG = True #False
         self.commandLineQRCode = False
         self.uuid = ''
         self.base_uri = ''
@@ -105,7 +105,7 @@ class WebWeixin(object):
         self.GroupMemeberList = []  # 群友
         self.PublicUsersList = []  # 公众号／服务号
         self.SpecialUsersList = []  # 特殊账号
-        self.autoReplyMode = False
+        self.autoReplyMode = True #False
         self.syncHost = ''
         self.user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.109 Safari/537.36'
         self.interactive = False
@@ -798,9 +798,11 @@ class WebWeixin(object):
                 #    store
 #自己加的代码-------------------------------------------#
                 if self.autoReplyMode:
-                    ans = self._xiaodoubi(content) + '\n[微信机器人自动回复]'
+                    #print('%s 刘晓婉' %self._xiaodoubi(content))
+                    ans = self._simsimi(content)+'\n[微信机器人自动回复]'
+
                     if self.webwxsendmsg(ans, msg['FromUserName']):
-                        print('自动回复: ' + ans)
+                        print('自动回复:' + ans)
                         logging.info('自动回复: ' + ans)
                     else:
                         print('自动回复失败')
@@ -1155,20 +1157,28 @@ class WebWeixin(object):
         return ''
 
     def _xiaodoubi(self, word):
-        url = 'http://www.xiaodoubi.com/bot/chat.php'
+        url = 'http://sandbox.api.simsimi.com/request.p'
         try:
-            r = requests.post(url, data={'chat': word})
+            r = requests.post(url, data={'key':'d1429a6c-71bf-4be4-a870-766969075a57','ft':1.0,'text': word})
+            print('\n刘晓婉：%s 的机器人\n' %r)
             return r.content
         except:
             return "让我一个人静静 T_T..."
 
     def _simsimi(self, word):
         key = ''
-        url = 'http://sandbox.api.simsimi.com/request.p?key=%s&lc=ch&ft=0.0&text=%s' % (
-            key, word)
+        url = 'http://sandbox.api.simsimi.com/request.p?key=d1429a6c-71bf-4be4-a870-766969075a57&lc=zh&ft=1.0&text=%s' %word
         r = requests.get(url)
+        #print('刘晓婉 %s 的机器人' %r.text)
         ans = r.json()
-        if ans['result'] == '100':
+        
+        #lxw_result = ans['result']
+        print('刘晓婉 %s 的机器人 type ans' %ans)
+        #ans = json.dumps(ans)
+        lxwtest = ans['result']
+        print('刘晓婉 %s 的机器人 lxwtest' %lxwtest)
+        print('刘晓婉 %s 的机器人 lxwtest' %type(lxwtest))
+        if ans['result'] == 100:
             return ans['response']
         else:
             return '你在说什么，风太大听不清列'
